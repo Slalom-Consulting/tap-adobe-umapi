@@ -2,61 +2,33 @@
 
 from pathlib import Path
 from typing import Any, Dict, Optional, Union, List, Iterable
-
 from singer_sdk import typing as th  # JSON Schema typing helpers
-
 from tap_adobe_umapi.client import AdobeUmapiStream
 
-# TODO: Delete this is if not using json files for schema definition
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
-# TODO: - Override `UsersStream` and `GroupsStream` with your own stream definition.
-#       - Copy-paste as many times as needed to create multiple stream types.
 
 
-class UsersStream(AdobeUmapiStream):
+class OrganizationBasedStream(AdobeUmapiStream):
+    """Base class for streams that are keys based on project ID."""
+
+    @property
+    def partitions(self) -> list:
+        """Return a list of partition key dicts (if applicable), otherwise None."""
+        if "{organization_id}" in self.path:
+            return [
+                {"project_id": self.config.get("project_id")}
+            ]
+        raise ValueError(
+            "Could not detect partition type for stream "
+            f"'{self.name}' ({self.path}). "
+            "Expected a URL path containing '{organization_id}'. "
+        )
+
+class UsersStream(OrganizationBasedStream):
     """Define custom stream."""
     name = "users"
-    path = "/users"
-    primary_keys = ["id"]
+    path = "/users/{organization_id}/0"
+    primary_keys = None
     replication_key = None
-    # Optionally, you may also use `schema_filepath` in place of `schema`:
-    # schema_filepath = SCHEMAS_DIR / "users.json"
-    schema = th.PropertiesList(
-        th.Property("name", th.StringType),
-        th.Property(
-            "id",
-            th.StringType,
-            description="The user's system ID"
-        ),
-        th.Property(
-            "age",
-            th.IntegerType,
-            description="The user's age in years"
-        ),
-        th.Property(
-            "email",
-            th.StringType,
-            description="The user's email address"
-        ),
-        th.Property("street", th.StringType),
-        th.Property("city", th.StringType),
-        th.Property(
-            "state",
-            th.StringType,
-            description="State name in ISO 3166-2 format"
-        ),
-        th.Property("zip", th.StringType),
-    ).to_dict()
+    schema_filepath = SCHEMAS_DIR / "users.json"
 
-
-class GroupsStream(AdobeUmapiStream):
-    """Define custom stream."""
-    name = "groups"
-    path = "/groups"
-    primary_keys = ["id"]
-    replication_key = "modified"
-    schema = th.PropertiesList(
-        th.Property("name", th.StringType),
-        th.Property("id", th.StringType),
-        th.Property("modified", th.DateTimeType),
-    ).to_dict()
