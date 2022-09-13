@@ -8,13 +8,12 @@ from singer_sdk import typing as th  # JSON schema typing helpers
 from tap_adobe_umapi.streams import (
     AdobeUmapiStream,
     UsersStream,
-    GroupsStream,
 )
 # TODO: Compile a list of custom stream types here
 #       OR rewrite discover_streams() below with your custom logic.
 STREAM_TYPES = [
     UsersStream,
-    GroupsStream,
+
 ]
 
 
@@ -25,26 +24,45 @@ class TapAdobeUmapi(Tap):
     # TODO: Update this section with the actual config values you expect:
     config_jsonschema = th.PropertiesList(
         th.Property(
-            "auth_token",
+            "organization_id",
             th.StringType,
             required=True,
-            description="The token to authenticate against the API service"
+            description=""
         ),
         th.Property(
-            "project_ids",
-            th.ArrayType(th.StringType),
+            "technical_account_id",
+            th.StringType,
             required=True,
-            description="Project IDs to replicate"
+            description=""
         ),
         th.Property(
-            "start_date",
-            th.DateTimeType,
-            description="The earliest record date to sync"
+            "api_key",
+            th.StringType,
+            required=True,
+            description=""
+        ),
+        th.Property(
+            "client_secret",
+            th.StringType,
+            required=True,
+            description=""
+        ),
+        th.Property(
+            "private_key",
+            th.StringType,
+            required=True,
+            description=""
         ),
         th.Property(
             "api_url",
             th.StringType,
-            default="https://api.mysample.com",
+            default="https://usermanagement.adobe.io/v2/usermanagement",
+            description="The url for the API service"
+        ),
+        th.Property(
+            "ims_host",
+            th.StringType,
+            default="https://ims-na1.adobelogin.com",
             description="The url for the API service"
         ),
     ).to_dict()
