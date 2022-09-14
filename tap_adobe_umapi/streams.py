@@ -27,7 +27,7 @@ class UsersStream(OrganizationBasedStream):
     """Define custom stream."""
     name = "users"
     path = "/users/{orgId}/{page}"
-    records_jsonpath = "$.users[*]"
+    records_jsonpath = "$.users[*]"  ##TODO: fix record path not passing along in stream. possible issue with client parse_response
     primary_keys = ["id"]
     replication_key = None
     schema_filepath = SCHEMAS_DIR / "users.json"

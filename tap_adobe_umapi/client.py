@@ -50,6 +50,7 @@ class AdobeUmapiStream(RESTStream):
         """
         return AdobeUmapiPaginator("X-Next-Page")
 
+    ##TODO: fix backoff issue from Adobe server
     def backoff_wait_generator(self) -> Callable[..., Generator[int, Any, None]]:
         """The wait generator used by the backoff decorator on request failure.
         See for options:

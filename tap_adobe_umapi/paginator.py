@@ -1,6 +1,7 @@
 from singer_sdk.pagination import SimpleHeaderPaginator, BaseAPIPaginator
 from requests import Response
 
+##TODO: test for correct next page number
 class AdobeUmapiPaginator(SimpleHeaderPaginator):
     """Paginator class for APIs that use page number."""
 
@@ -11,7 +12,7 @@ class AdobeUmapiPaginator(SimpleHeaderPaginator):
         Returns:
             Boolean flag used to indicate if the endpoint has more pages.
         """
-        return False #response.json().get("lastPage", False)
+        return response.json().get("lastPage", False)
         
 
     def get_next(self, response: Response) -> int:
