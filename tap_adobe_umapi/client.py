@@ -22,8 +22,6 @@ class AdobeUmapiStream(RESTStream):
         """Return the API URL root, configurable via tap settings."""
         return self.config.get("api_url")
 
-    records_jsonpath = "$[*]"  # Or override `parse_response`.
-
     @property
     @cached
     def authenticator(self) -> AdobeUmapiAuthenticator:

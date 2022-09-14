@@ -14,9 +14,9 @@ class OrganizationBasedStream(AdobeUmapiStream):
     @property
     def partitions(self) -> list:
         """Return a list of partition key dicts (if applicable), otherwise None."""
-        if "{organization_id}" in self.path:
+        if "{orgId}" in self.path:
             return [
-                {"project_id": self.config.get("project_id")}
+                {"orgId": self.config.get("organization_id")}
             ]
         raise ValueError(
             "Could not detect partition type for stream "
@@ -27,8 +27,10 @@ class OrganizationBasedStream(AdobeUmapiStream):
 class UsersStream(OrganizationBasedStream):
     """Define custom stream."""
     name = "users"
-    path = "/users/{organization_id}/0"
-    primary_keys = None
+    path = "/users/{orgId}/0"
+    records_jsonpath = "$.users[*]"
+    primary_keys = []
     replication_key = None
     schema_filepath = SCHEMAS_DIR / "users.json"
+    
 
