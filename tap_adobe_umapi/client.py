@@ -102,9 +102,7 @@ class AdobeUmapiStream(RESTStream):
     def parse_response(self, response: requests.Response) -> Iterable[dict]:
         """Parse the response and return an iterator of result rows."""
         # TODO: Parse response body and return a set of records.
-        #yield from extract_jsonpath(self.records_jsonpath, input=response.json())
-        print(response.headers.get("X-Next-Page"))
-        return response.json().get("users")[0]
+        yield from extract_jsonpath(self.records_jsonpath, input=response.json())
 
         
         # response_limit = 400
