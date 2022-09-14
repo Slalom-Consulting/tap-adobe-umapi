@@ -7,7 +7,6 @@ from tap_adobe_umapi.client import AdobeUmapiStream
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 
-
 class OrganizationBasedStream(AdobeUmapiStream):
     """Base class for streams that are keys based on project ID."""
 
@@ -21,16 +20,15 @@ class OrganizationBasedStream(AdobeUmapiStream):
         raise ValueError(
             "Could not detect partition type for stream "
             f"'{self.name}' ({self.path}). "
-            "Expected a URL path containing '{organization_id}'. "
+            "Expected a URL path containing '{orgId}'. "
         )
 
 class UsersStream(OrganizationBasedStream):
     """Define custom stream."""
     name = "users"
-    path = "/users/{orgId}/0"
+    path = "/users/{orgId}/{page}"
     records_jsonpath = "$.users[*]"
-    primary_keys = []
+    primary_keys = ["id"]
     replication_key = None
     schema_filepath = SCHEMAS_DIR / "users.json"
     
-

@@ -2,21 +2,21 @@
 
 import requests
 from pathlib import Path
-from typing import Any, Dict, Optional, Union, List, Iterable
+from typing import Any, Dict, Optional, Union, List, Iterable, Callable, Generator
 
 from memoization import cached
-
+import backoff
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 from singer_sdk.streams import RESTStream
-
 from tap_adobe_umapi.auth import AdobeUmapiAuthenticator
+from tap_adobe_umapi.paginator import AdobeUmapiPaginator, BaseAPIPaginator
 
 
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 
 class AdobeUmapiStream(RESTStream):
     """AdobeUmapi stream class."""
-
+    
     @property
     def url_base(self) -> str:
         """Return the API URL root, configurable via tap settings."""
@@ -40,31 +40,70 @@ class AdobeUmapiStream(RESTStream):
 
         if "user_agent" in self.config:
             headers["User-Agent"] = self.config.get("user_agent")
-        
+
         return headers
 
+    def get_new_paginator(self) -> BaseAPIPaginator:
+        """Get a fresh paginator for this API endpoint.
+        Returns:
+            A paginator instance.
+        """
+        return AdobeUmapiPaginator("X-Next-Page")
 
-#    def get_next_page_token(
-#        self, response: requests.Response, previous_token: Optional[int]
-#    ) -> Optional[Any]:
-#        """Return a token for identifying next page or None if no more pages."""
-#        
-#        if previous_token:
-#            last_page: bool = response.json().get("lastPage")
-#
-#            if not last_page:
-#                next_page_token = 1 + previous_token
-#
-#        else:
-#            next_page_token = 0
-#
-#        return next_page_token
+    def backoff_wait_generator(self) -> Callable[..., Generator[int, Any, None]]:
+        """The wait generator used by the backoff decorator on request failure.
+        See for options:
+        https://github.com/litl/backoff/blob/master/backoff/_wait_gen.py
+        And see for examples: `Code Samples <../code_samples.html#custom-backoff>`_
+        Returns:
+            The wait generator
+        """
+        
+        return backoff.constant(60)  # type: ignore # ignore 'Returning Any'
 
+#   def backoff_wait_generator(self) -> Callable[..., Generator[int, Any, None]]:
+#       def _backoff_from_headers(retriable_api_error):
+#           response_headers = retriable_api_error.headers
+#           return int(response_headers.get("Retry-After", 0))
+#
+#       return self.backoff_runtime(value=_backoff_from_headers)
+
+    def prepare_request(self, context, next_page_token) -> requests.PreparedRequest:
+        """Prepare a request object for this stream.
+        If partitioning is supported, the `context` object will contain the partition
+        definitions. Pagination information can be parsed from `next_page_token` if
+        `next_page_token` is not None.
+        Args:
+            context: Stream partition or context dictionary.
+            next_page_token: Token, page number or any request argument to request the
+                next page of data.
+        Returns:
+            Build a request with the stream's URL, path, query parameters,
+            HTTP headers and authenticator.
+        """
+        
+        context["page"] = next_page_token or 0
+
+        http_method = self.rest_method
+        url: str = self.get_url(context)
+        params: dict = self.get_url_params(context, None)
+        request_data = self.prepare_request_payload(context, None)
+        headers = self.http_headers
+
+        return self.build_prepared_request(
+            method=http_method,
+            url=url,
+            params=params,
+            headers=headers,
+            json=request_data,
+        )
 
     def parse_response(self, response: requests.Response) -> Iterable[dict]:
         """Parse the response and return an iterator of result rows."""
         # TODO: Parse response body and return a set of records.
-        yield from extract_jsonpath(self.records_jsonpath, input=response.json())
+        #yield from extract_jsonpath(self.records_jsonpath, input=response.json())
+        print(response.headers.get("X-Next-Page"))
+        return response.json().get("users")[0]
 
         
         # response_limit = 400
