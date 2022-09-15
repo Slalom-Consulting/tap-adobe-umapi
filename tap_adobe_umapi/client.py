@@ -51,23 +51,22 @@ class AdobeUmapiStream(RESTStream):
         return AdobeUmapiPaginator("X-Next-Page")
 
     ##TODO: fix backoff issue from Adobe server
-    def backoff_wait_generator(self) -> Callable[..., Generator[int, Any, None]]:
-        """The wait generator used by the backoff decorator on request failure.
-        See for options:
-        https://github.com/litl/backoff/blob/master/backoff/_wait_gen.py
-        And see for examples: `Code Samples <../code_samples.html#custom-backoff>`_
-        Returns:
-            The wait generator
+    def backoff_runtime(
+        self, *, value: Callable[[Any], int]
+    ) -> Generator[int, None, None]:
+        """Optional backoff wait generator that can replace the default `backoff.expo`.
+        It is based on parsing the thrown exception of the decorated method, making it
+        possible for response values to be in scope.
+        Args:
+            value: a callable which takes as input the decorated
+                function's thrown exception and determines how
+                long to wait.
+        Yields:
+            The thrown exception
         """
-        
-        return backoff.constant(60)  # type: ignore # ignore 'Returning Any'
-
-#   def backoff_wait_generator(self) -> Callable[..., Generator[int, Any, None]]:
-#       def _backoff_from_headers(retriable_api_error):
-#           response_headers = retriable_api_error.headers
-#           return int(response_headers.get("Retry-After", 0))
-#
-#       return self.backoff_runtime(value=_backoff_from_headers)
+        exception = yield  # type: ignore[misc]
+        while True:
+            exception = yield value(exception)
 
     def prepare_request(self, context, next_page_token) -> requests.PreparedRequest:
         """Prepare a request object for this stream.
