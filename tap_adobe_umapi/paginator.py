@@ -1,29 +1,39 @@
-from singer_sdk.pagination import SimpleHeaderPaginator, BaseAPIPaginator
+from singer_sdk.pagination import BaseAPIPaginator
 from requests import Response
+from typing import Any, Union
 
 ##TODO: test for correct next page number
-class AdobeUmapiPaginator(SimpleHeaderPaginator):
+class AdobeUmapiPaginator(BaseAPIPaginator):
     """Paginator class for APIs that use page number."""
 
-    def has_more(self, response: Response) -> bool:
-        """Override this method to check if the endpoint has any pages left.
+    def __init__(
+        self,
+        #jsonpath: str,
+        key: str,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None:
+        """Create a new paginator.
         Args:
-            response: API response object.
-        Returns:
-            Boolean flag used to indicate if the endpoint has more pages.
+            jsonpath: A JSONPath expression.
+            args: Paginator positional arguments for base class.
+            kwargs: Paginator keyword arguments for base class.
         """
-        return response.json().get("lastPage", False)
-        
+        super().__init__(None, *args, **kwargs)
+        #self._jsonpath = jsonpath
 
-    def get_next(self, response: Response) -> int:
+    def get_next(self, response: Response) -> Union[int, None]:
         """Get the next page token.
         Args:
             response: API response object.
         Returns:
             The next page token.
         """
-        if self.has_more:
-            next_page = response.headers.get(self._key) + 1
-            print(next_page)
+        #all_matches = extract_jsonpath(self._jsonpath, response.json())
+        #return next(all_matches, None)
+        is_last_page:bool = response.json().get("lastPage", None)
         
-        return next_page
+        if is_last_page == False:
+            current_page = int(response.headers.get(self._key))
+            return current_page + 1
+
