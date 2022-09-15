@@ -2,11 +2,8 @@
 
 import requests
 from pathlib import Path
-from typing import Any, Dict, Optional, Union, List, Iterable, Callable, Generator
 
 from memoization import cached
-import backoff
-from singer_sdk.helpers.jsonpath import extract_jsonpath
 from singer_sdk.streams import RESTStream
 from tap_adobe_umapi.auth import AdobeUmapiAuthenticator
 from tap_adobe_umapi.paginator import AdobeUmapiPaginator, BaseAPIPaginator
@@ -17,10 +14,7 @@ SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 class AdobeUmapiStream(RESTStream):
     """AdobeUmapi stream class."""
     
-    @property
-    def url_base(self) -> str:
-        """Return the API URL root, configurable via tap settings."""
-        return self.config.get("api_url")
+    url_base = "https://usermanagement.adobe.io/v2/usermanagement"
 
     @property
     @cached
@@ -48,25 +42,25 @@ class AdobeUmapiStream(RESTStream):
         Returns:
             A paginator instance.
         """
-        return AdobeUmapiPaginator("X-Next-Page")
+        return AdobeUmapiPaginator()
 
     ##TODO: fix backoff issue from Adobe server
-    def backoff_runtime(
-        self, *, value: Callable[[Any], int]
-    ) -> Generator[int, None, None]:
-        """Optional backoff wait generator that can replace the default `backoff.expo`.
-        It is based on parsing the thrown exception of the decorated method, making it
-        possible for response values to be in scope.
-        Args:
-            value: a callable which takes as input the decorated
-                function's thrown exception and determines how
-                long to wait.
-        Yields:
-            The thrown exception
-        """
-        exception = yield  # type: ignore[misc]
-        while True:
-            exception = yield value(exception)
+    #def backoff_runtime(
+    #    self, *, value: Callable[[Any], int]
+    #) -> Generator[int, None, None]:
+    #    """Optional backoff wait generator that can replace the default `backoff.expo`.
+    #    It is based on parsing the thrown exception of the decorated method, making it
+    #    possible for response values to be in scope.
+    #    Args:
+    #        value: a callable which takes as input the decorated
+    #            function's thrown exception and determines how
+    #            long to wait.
+    #    Yields:
+    #        The thrown exception
+    #    """
+    #    exception = yield  # type: ignore[misc]
+    #    while True:
+    #        exception = yield value(exception)
 
     def prepare_request(self, context, next_page_token) -> requests.PreparedRequest:
         """Prepare a request object for this stream.
@@ -82,6 +76,10 @@ class AdobeUmapiStream(RESTStream):
             HTTP headers and authenticator.
         """
         
+        if not context:
+            context = {}
+
+        context["orgId"] = self.config.get("organization_id")
         context["page"] = next_page_token or 0
 
         http_method = self.rest_method
@@ -97,14 +95,3 @@ class AdobeUmapiStream(RESTStream):
             headers=headers,
             json=request_data,
         )
-
-    def parse_response(self, response: requests.Response) -> Iterable[dict]:
-        """Parse the response and return an iterator of result rows."""
-        # TODO: Parse response body and return a set of records.
-        yield from extract_jsonpath(self.records_jsonpath, input=response.json())
-
-        
-        # response_limit = 400
-        # limit of 25 requests per min
-        # response will give Retry-After: seconds
-        # if that is given, add a wait before continue

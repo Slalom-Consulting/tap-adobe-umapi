@@ -4,16 +4,15 @@ from typing import List
 
 from singer_sdk import Tap, Stream
 from singer_sdk import typing as th  # JSON schema typing helpers
-# TODO: Import your custom stream types here:
+
 from tap_adobe_umapi.streams import (
-    AdobeUmapiStream,
     UsersStream,
+    GroupsStream
 )
-# TODO: Compile a list of custom stream types here
-#       OR rewrite discover_streams() below with your custom logic.
+
 STREAM_TYPES = [
     UsersStream,
-
+    GroupsStream
 ]
 
 
@@ -21,7 +20,6 @@ class TapAdobeUmapi(Tap):
     """AdobeUmapi tap class."""
     name = "tap-adobe-umapi"
 
-    # TODO: Update this section with the actual config values you expect:
     config_jsonschema = th.PropertiesList(
         th.Property(
             "organization_id",
@@ -52,18 +50,6 @@ class TapAdobeUmapi(Tap):
             th.StringType,
             required=True,
             description=""
-        ),
-        th.Property(
-            "api_url",
-            th.StringType,
-            default="https://usermanagement.adobe.io/v2/usermanagement",
-            description="The url for the API service"
-        ),
-        th.Property(
-            "ims_host",
-            th.StringType,
-            default="https://ims-na1.adobelogin.com",
-            description="The url for the API service"
         ),
     ).to_dict()
 

@@ -1,6 +1,5 @@
 """AdobeUmapi Authentication."""
 
-
 from singer_sdk.authenticators import OAuthJWTAuthenticator
 import time
 import jwt
@@ -8,7 +7,8 @@ from typing import Any, Union
 
 class AdobeUmapiAuthenticator(OAuthJWTAuthenticator):
     """Authenticator class for AdobeUmapi."""
-    # Overrides defaults
+
+    ims_host = "https://ims-na1.adobelogin.com"
 
     @property
     def oauth_request_body(self) -> dict:
@@ -18,7 +18,7 @@ class AdobeUmapiAuthenticator(OAuthJWTAuthenticator):
             Request body mapping for OAuth.
         """
 
-        ims_host = self.config.get("ims_host")
+        ims_host = self.ims_host
         api_key = self.config.get("api_key")
 
         payload = {
@@ -51,7 +51,7 @@ class AdobeUmapiAuthenticator(OAuthJWTAuthenticator):
         private_key_string: Union[str, Any] = private_key.decode("UTF-8")
 
         return {
-            "client_id": self.config.get("api_key"),  #note use api_key
+            "client_id": self.config.get("api_key"),
             "client_secret": self.client_secret,
             "jwt_token": jwt.encode(
                 self.oauth_request_body, private_key_string, "RS256"
@@ -60,10 +60,8 @@ class AdobeUmapiAuthenticator(OAuthJWTAuthenticator):
 
     @classmethod
     def create_for_stream(cls, stream) -> "AdobeUmapiAuthenticator":
-        ims_host = stream.config.get("ims_host")
-        
         return cls(
             stream=stream,
-            auth_endpoint = f'{ims_host}/ims/exchange/jwt',
+            auth_endpoint = f'{cls.ims_host}/ims/exchange/jwt',
             oauth_scopes = ["ent_user_sdk"]
         )
