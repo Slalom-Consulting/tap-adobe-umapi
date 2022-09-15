@@ -1,55 +1,38 @@
 {
   "type": "object",
   "properties": {
-    "lastPage": {
-      "type": "boolean"
-    },
-    "message": {
+    "country": {
       "type": "string"
     },
-    "result": {
+    "domain": {
       "type": "string"
     },
-    "users": {
+    "email": {
+      "type": "string"
+    },
+    "firstname": {
+      "type": "string"
+    },
+    "groups": {
       "type": "array",
       "items": {
-        "type": "object",
-        "properties": {
-          "country": {
-            "type": "string"
-          },
-          "domain": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "firstname": {
-            "type": "string"
-          },
-          "groups": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "id": {
-            "type": "string"
-          },
-          "lastname": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string"
-          },
-          "type": {
-            "type": "string"
-          },
-          "username": {
-            "type": "string"
-          }
-        }
+        "type": "string"
       }
+    },
+    "id": {
+      "type": "string"
+    },
+    "lastname": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "username": {
+      "type": "string"
     }
   }
 }
