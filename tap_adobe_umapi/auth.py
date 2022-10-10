@@ -3,35 +3,36 @@
 from singer_sdk.authenticators import OAuthJWTAuthenticator
 import time
 import jwt
-from typing import Any, Union, List
+from typing import Any, Union
 
 class AdobeUmapiAuthenticator(OAuthJWTAuthenticator):
     """Authenticator class for AdobeUmapi."""
 
-    @property
-    def ims_host(self) -> str:
-        return self.config.get('ims_host')
+    ims_host = "https://ims-na1.adobelogin.com"
 
     @property
     def auth_endpoint(self) -> str:
-        endpoint = "/ims/exchange/jwt"
-        return f'{self.ims_host}{endpoint}'
+        return f'{self.ims_host}/ims/exchange/jwt'
 
     @property
-    def oauth_scopes(self) -> List[str]:
-        return ["ent_user_sdk"]
-
-    @property
-    def oauth_request_body(self) -> dict:
-        """Return request body for OAuth request.
+    def jwt(self) -> str:
+        """Return JSON WEB Token for Adobe Developer Console OAuth requests
 
         Returns:
-            Request body mapping for OAuth.
+            JSON WEB Token for OAuth.
         """
+
+        private_key: Union[bytes, Any] = bytes(self.private_key, "UTF-8")
+        private_key_string: Union[str, Any] = private_key.decode("UTF-8")
         api_key = self.config.get("api_key")
+        expiration = self.config.get("jwt_expiration")
+        expiration_max = 60*60*24
+
+        if expiration > expiration_max:
+            expiration = expiration_max
 
         payload = {
-            "exp": int(time.time()) + 60*60*24,
+            "exp": int(time.time()) + expiration,
             "iss": self.config.get("organization_id"),
             "sub": self.config.get("technical_account_id"),
             "aud": f'{self.ims_host}/c/{api_key}'
@@ -41,7 +42,7 @@ class AdobeUmapiAuthenticator(OAuthJWTAuthenticator):
             scope_uri = f'{self.ims_host}/s/{scope}'
             payload[scope_uri] = True
 
-        return payload
+        return jwt.encode(payload, private_key_string, "RS256")
 
     @property
     def oauth_request_payload(self) -> dict:
@@ -49,20 +50,10 @@ class AdobeUmapiAuthenticator(OAuthJWTAuthenticator):
 
         Returns:
             Payload object for OAuth.
-
-        Raises:
-            ValueError: If the private key is not set.
         """
-        if not self.private_key:
-            raise ValueError("Missing 'private_key' property for OAuth payload.")
-
-        private_key: Union[bytes, Any] = bytes(self.private_key, "UTF-8")
-        private_key_string: Union[str, Any] = private_key.decode("UTF-8")
 
         return {
             "client_id": self.config.get("api_key"),
             "client_secret": self.client_secret,
-            "jwt_token": jwt.encode(
-                self.oauth_request_body, private_key_string, "RS256"
-            )
+            "jwt_token": self.jwt
         }

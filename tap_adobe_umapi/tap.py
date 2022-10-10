@@ -15,7 +15,6 @@ STREAM_TYPES = [
     GroupsStream
 ]
 
-
 class TapAdobeUmapi(Tap):
     """AdobeUmapi tap class."""
     name = "tap-adobe-umapi"
@@ -52,18 +51,18 @@ class TapAdobeUmapi(Tap):
             description=""
         ),
         th.Property(
-            "ims_host",
-            th.StringType,
-            required=False,
-            description="IMS host url",
-            default="https://ims-na1.adobelogin.com"
-        ),
-        th.Property(
             "api_url",
             th.StringType,
             required=False,
-            description="API URL",
+            description="User Management API URL",
             default="https://usermanagement.adobe.io/v2/usermanagement"
+        ),
+        th.Property(
+            "jwt_expiration",
+            th.NumberType,
+            required=False,
+            description="Expiraton in seconds for JWT exchange (Default: 300, Max: 86400, Recomended as small as possible)",
+            default=60*5
         ),
     ).to_dict()
 
