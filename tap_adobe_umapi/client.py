@@ -23,7 +23,6 @@ class AdobeUmapiStream(RESTStream):
     @cached
     def authenticator(self) -> AdobeUmapiAuthenticator:
         """Return a new authenticator object."""
-        
         return AdobeUmapiAuthenticator(self, oauth_scopes=["ent_user_sdk"])
 
     @property
