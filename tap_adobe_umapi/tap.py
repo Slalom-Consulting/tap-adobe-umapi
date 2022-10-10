@@ -51,6 +51,20 @@ class TapAdobeUmapi(Tap):
             required=True,
             description=""
         ),
+        th.Property(
+            "ims_host",
+            th.StringType,
+            required=False,
+            description="IMS host url",
+            default="https://ims-na1.adobelogin.com"
+        ),
+        th.Property(
+            "api_url",
+            th.StringType,
+            required=False,
+            description="API URL",
+            default="https://usermanagement.adobe.io/v2/usermanagement"
+        ),
     ).to_dict()
 
     def discover_streams(self) -> List[Stream]:

@@ -3,12 +3,23 @@
 from singer_sdk.authenticators import OAuthJWTAuthenticator
 import time
 import jwt
-from typing import Any, Union
+from typing import Any, Union, List
 
 class AdobeUmapiAuthenticator(OAuthJWTAuthenticator):
     """Authenticator class for AdobeUmapi."""
 
-    ims_host = "https://ims-na1.adobelogin.com"
+    @property
+    def ims_host(self) -> str:
+        return self.config.get('ims_host')
+
+    @property
+    def auth_endpoint(self) -> str:
+        endpoint = "/ims/exchange/jwt"
+        return f'{self.ims_host}{endpoint}'
+
+    @property
+    def oauth_scopes(self) -> List[str]:
+        return ["ent_user_sdk"]
 
     @property
     def oauth_request_body(self) -> dict:
@@ -17,26 +28,24 @@ class AdobeUmapiAuthenticator(OAuthJWTAuthenticator):
         Returns:
             Request body mapping for OAuth.
         """
-
-        ims_host = self.ims_host
         api_key = self.config.get("api_key")
 
         payload = {
             "exp": int(time.time()) + 60*60*24,
             "iss": self.config.get("organization_id"),
             "sub": self.config.get("technical_account_id"),
-            "aud": f'{ims_host}/c/{api_key}'
+            "aud": f'{self.ims_host}/c/{api_key}'
         }
 
         for scope in self.oauth_scopes:
-            scope_uri = f'{ims_host}/s/{scope}'
+            scope_uri = f'{self.ims_host}/s/{scope}'
             payload[scope_uri] = True
 
         return payload
 
     @property
     def oauth_request_payload(self) -> dict:
-        """Return request paytload for OAuth request.
+        """Return request payload for OAuth request.
 
         Returns:
             Payload object for OAuth.
@@ -57,11 +66,3 @@ class AdobeUmapiAuthenticator(OAuthJWTAuthenticator):
                 self.oauth_request_body, private_key_string, "RS256"
             )
         }
-
-    @classmethod
-    def create_for_stream(cls, stream) -> "AdobeUmapiAuthenticator":
-        return cls(
-            stream=stream,
-            auth_endpoint = f'{cls.ims_host}/ims/exchange/jwt',
-            oauth_scopes = ["ent_user_sdk"]
-        )

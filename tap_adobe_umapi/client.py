@@ -8,19 +8,22 @@ from singer_sdk.streams import RESTStream
 from tap_adobe_umapi.auth import AdobeUmapiAuthenticator
 from tap_adobe_umapi.paginator import AdobeUmapiPaginator, BaseAPIPaginator
 
-
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 
 class AdobeUmapiStream(RESTStream):
     """AdobeUmapi stream class."""
     
-    url_base = "https://usermanagement.adobe.io/v2/usermanagement"
+    @property
+    def url_base(self) -> str:
+        return self.config.get('api_url')
+    
+    extra_retry_statuses = [429]
 
     @property
     @cached
     def authenticator(self) -> AdobeUmapiAuthenticator:
         """Return a new authenticator object."""
-        return AdobeUmapiAuthenticator.create_for_stream(self)
+        return AdobeUmapiAuthenticator(self)
 
     @property
     def http_headers(self) -> dict:
@@ -43,24 +46,15 @@ class AdobeUmapiStream(RESTStream):
             A paginator instance.
         """
         return AdobeUmapiPaginator()
+    
+#    ##TODO: fix backoff issue from Adobe server
+#    def backoff_wait_generator(self):
+#        def get_wait_time_from_response(exception):
+#            advice = int(exception.response.headers.get("Retry-After", 0))
+#            return advice
+#
+#        return self.backoff_runtime(value=get_wait_time_from_response)
 
-    ##TODO: fix backoff issue from Adobe server
-    #def backoff_runtime(
-    #    self, *, value: Callable[[Any], int]
-    #) -> Generator[int, None, None]:
-    #    """Optional backoff wait generator that can replace the default `backoff.expo`.
-    #    It is based on parsing the thrown exception of the decorated method, making it
-    #    possible for response values to be in scope.
-    #    Args:
-    #        value: a callable which takes as input the decorated
-    #            function's thrown exception and determines how
-    #            long to wait.
-    #    Yields:
-    #        The thrown exception
-    #    """
-    #    exception = yield  # type: ignore[misc]
-    #    while True:
-    #        exception = yield value(exception)
 
     def prepare_request(self, context, next_page_token) -> requests.PreparedRequest:
         """Prepare a request object for this stream.
