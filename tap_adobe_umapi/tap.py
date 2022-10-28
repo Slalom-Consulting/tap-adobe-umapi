@@ -1,9 +1,8 @@
 """AdobeUmapi tap class."""
 
 from typing import List
-
 from singer_sdk import Tap, Stream
-from singer_sdk import typing as th  # JSON schema typing helpers
+from singer_sdk import typing as th
 
 from tap_adobe_umapi.streams import (
     UsersStream,
@@ -15,52 +14,53 @@ STREAM_TYPES = [
     GroupsStream
 ]
 
+
 class TapAdobeUmapi(Tap):
     """AdobeUmapi tap class."""
     name = "tap-adobe-umapi"
 
     config_jsonschema = th.PropertiesList(
         th.Property(
-            "organization_id",
+            'client_id',
             th.StringType,
             required=True,
-            description=""
+            description='Service account Client ID'
         ),
         th.Property(
-            "technical_account_id",
+            'client_secret',
             th.StringType,
             required=True,
-            description=""
+            description='Service account Client Secret'
         ),
         th.Property(
-            "api_key",
+            'technical_account_id',
             th.StringType,
             required=True,
-            description=""
+            description='Service account Technical Account ID'
         ),
         th.Property(
-            "client_secret",
+            'private_key',
             th.StringType,
             required=True,
-            description=""
+            description='Service account Private Key'
         ),
         th.Property(
-            "private_key",
+            'organization_id',
             th.StringType,
             required=True,
-            description=""
+            description=''
+        ),
+        th.Property(
+            'auth_expiration',
+            th.NumberType,
+            description='Expiraton in seconds for JWT exchange (Default: 300, Max: 86400, Recomended as small as possible)',
+            default=300
         ),
         th.Property(
             "api_url",
             th.StringType,
-            description="User Management API URL",
-            default="https://usermanagement.adobe.io/v2/usermanagement"
-        ),
-        th.Property(
-            "jwt_expiration",
-            th.NumberType,
-            description="Expiraton in seconds for JWT exchange (Default: 300, Max: 86400, Recomended as small as possible)",
-            default=60*5
+            description='User Management API URL',
+            default='https://usermanagement.adobe.io/v2/usermanagement'
         ),
     ).to_dict()
 

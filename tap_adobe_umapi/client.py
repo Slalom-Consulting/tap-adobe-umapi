@@ -1,37 +1,38 @@
 """REST client handling, including AdobeUmapiStream base class."""
 
-import requests
-from memoization import cached
+from typing import Callable, Generator, Any
 from singer_sdk.streams import RESTStream
 from tap_adobe_umapi.auth import AdobeUmapiAuthenticator
 from tap_adobe_umapi.paginator import AdobeUmapiPaginator
+from memoization import cached
+import requests
+
+PAGINATION_INDEX = 0
 
 
 class AdobeUmapiStream(RESTStream):
     """AdobeUmapi stream class."""
     @property
     def url_base(self) -> str:
-        return self.config['api_url']
-    
-    extra_retry_statuses = [429]
+        return self.config.get('api_url')
 
     @property
     @cached
     def authenticator(self) -> AdobeUmapiAuthenticator:
         """Return a new authenticator object."""
-        return AdobeUmapiAuthenticator(self, oauth_scopes=["ent_user_sdk"])
+        return AdobeUmapiAuthenticator(self, oauth_scopes=['ent_user_sdk'])
 
     @property
     def http_headers(self) -> dict:
         """Return the http headers needed."""
         headers = {
-            "Content-type": "application/json",
-            "Accept": "application/json",
-            "x-api-key": self.config["api_key"],
+            'Content-type': 'application/json',
+            'Accept': 'application/json',
+            'x-api-key': str(self.config.get('client_id')),
         }
 
-        if "user_agent" in self.config:
-            headers["User-Agent"] = self.config["user_agent"]
+        if 'user_agent' in self.config:
+            headers['User-Agent'] = self.config.get('user_agent')
 
         return headers
 
@@ -40,14 +41,14 @@ class AdobeUmapiStream(RESTStream):
         Returns:
             A paginator instance.
         """
-        return AdobeUmapiPaginator()
+        return AdobeUmapiPaginator(PAGINATION_INDEX)
 
-    def backoff_wait_generator(self):
-        def get_wait_time_from_response(exception):
-            advice = int(exception.response.headers.get("Retry-After", 0))
-            return advice
+    def backoff_wait_generator(self) -> Callable[..., Generator[int, Any, None]]:
+        def _backoff_from_headers(retriable_api_error) -> int:
+            response_headers = retriable_api_error.response.headers
+            return int(response_headers.get('Retry-After', 0))
 
-        return self.backoff_runtime(value=get_wait_time_from_response)
+        return self.backoff_runtime(value=_backoff_from_headers)
 
     def prepare_request(self, context, next_page_token) -> requests.PreparedRequest:
         """Prepare a request object for this stream.
@@ -66,8 +67,7 @@ class AdobeUmapiStream(RESTStream):
         if not context:
             context = {}
 
-        context["orgId"] = self.config["organization_id"]
-        context["page"] = next_page_token or 0
+        context['page'] = next_page_token or PAGINATION_INDEX
 
         http_method = self.rest_method
         url: str = self.get_url(context)
@@ -76,9 +76,9 @@ class AdobeUmapiStream(RESTStream):
         headers = self.http_headers
 
         return self.build_prepared_request(
-            method=http_method,
-            url=url,
-            params=params,
-            headers=headers,
-            json=request_data,
+           method=http_method,
+           url=url,
+           params=params,
+           headers=headers,
+           json=request_data,
         )
