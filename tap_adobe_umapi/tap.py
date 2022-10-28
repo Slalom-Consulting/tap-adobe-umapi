@@ -53,14 +53,12 @@ class TapAdobeUmapi(Tap):
         th.Property(
             "api_url",
             th.StringType,
-            required=False,
             description="User Management API URL",
             default="https://usermanagement.adobe.io/v2/usermanagement"
         ),
         th.Property(
             "jwt_expiration",
             th.NumberType,
-            required=False,
             description="Expiraton in seconds for JWT exchange (Default: 300, Max: 86400, Recomended as small as possible)",
             default=60*5
         ),
