@@ -50,11 +50,11 @@ tap-adobe-umapi --about --format=markdown
 
 | Setting             | Required | Default | Description |
 |:--------------------|:--------:|:-------:|:------------|
-| client_id           | True     | None    | Service account Client ID |
-| client_secret       | True     | None    | Service account Client Secret |
-| technical_account_id| True     | None    | Service account Technical Account ID |
-| private_key         | True     | None    | Service account Private Key |
-| organization_id     | True     | None    |             |
+| client_id           | True     | None    | The Client ID for the service account (JWT)  |
+| client_secret       | True     | None    | The Client Secret for the service account (JWT)  |
+| technical_account_id| True     | None    | The Technical Account ID for the service account (JWT)  |
+| private_key         | True     | None    | The Private Key for the service account (JWT)  |
+| organization_id     | True     | None    | The unique identifier for an organization. |
 | auth_expiration     | False    |     300 | Expiraton in seconds for JWT exchange (Default: 300, Max: 86400, Recomended as small as possible) |
 | api_url             | False    | https://usermanagement.adobe.io/v2/usermanagement | User Management API URL |
 
@@ -66,13 +66,15 @@ This Singer tap will automatically import any environment variables within the w
 `.env` if the `--config=ENV` is provided, such that config values will be considered if a matching
 environment variable is set either in the terminal context or in the `.env` file.
 
+### Configure using environment variables
+
+This Singer tap will automatically import any environment variables within the working directory's
+`.env` if the `--config=ENV` is provided, such that config values will be considered if a matching
+environment variable is set either in the terminal context or in the `.env` file.
+
 ### Source Authentication and Authorization
 
-- [ ] `Developer TODO:` If your tap requires special access on the source system, or any special authentication requirements, provide those here.
-
-## Usage
-
-You can easily run `tap-adobe-umapi` by itself or in a pipeline using [Meltano](https://meltano.com/).
+Required auth configuration can be found [here](https://developer.adobe.com/developer-console/docs/guides/authentication/ServiceAccountIntegration/).
 
 ### Executing the Tap Directly
 

@@ -24,31 +24,31 @@ class TapAdobeUmapi(Tap):
             'client_id',
             th.StringType,
             required=True,
-            description='Service account Client ID'
+            description='The Client ID for the service account (JWT)'
         ),
         th.Property(
             'client_secret',
             th.StringType,
             required=True,
-            description='Service account Client Secret'
+            description='The Client Secret for the service account (JWT)'
         ),
         th.Property(
             'technical_account_id',
             th.StringType,
             required=True,
-            description='Service account Technical Account ID'
+            description='The Technical Account ID for the service account (JWT)'
         ),
         th.Property(
             'private_key',
             th.StringType,
             required=True,
-            description='Service account Private Key'
+            description='The Private Key for the service account (JWT)'
         ),
         th.Property(
             'organization_id',
             th.StringType,
             required=True,
-            description=''
+            description='The unique identifier for an organization.'
         ),
         th.Property(
             'auth_expiration',
