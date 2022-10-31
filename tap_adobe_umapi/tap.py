@@ -57,6 +57,11 @@ class TapAdobeUmapi(Tap):
             default=300
         ),
         th.Property(
+            "user_agent",
+            th.StringType,
+            description='User agent to present to the API'
+        ),
+        th.Property(
             "api_url",
             th.StringType,
             description='User Management API URL',
