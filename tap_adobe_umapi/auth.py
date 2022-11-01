@@ -2,17 +2,20 @@
 
 from typing import Any, Union
 from singer_sdk.authenticators import OAuthJWTAuthenticator
+from urllib.parse import urljoin
 import jwt
 import time
 
-IMS_HOST = 'https://ims-na1.adobelogin.com'
+AUTH_HOST = 'https://ims-na1.adobelogin.com'
 
 
 class AdobeUmapiAuthenticator(OAuthJWTAuthenticator):
     """Authenticator class for AdobeUmapi."""
     @property
     def auth_endpoint(self) -> str:
-        return f'{IMS_HOST}/ims/exchange/jwt'
+        host = self.config.get('auth_url', AUTH_HOST)
+        path = '/ims/exchange/jwt'
+        return urljoin(host, path)
 
     @property
     def oauth_request_body(self) -> dict:
@@ -26,12 +29,12 @@ class AdobeUmapiAuthenticator(OAuthJWTAuthenticator):
             'exp': int(time.time()) + expiration,
             'iss': self.config.get('organization_id'),
             'sub': self.config.get('technical_account_id'),
-            'aud': f'{IMS_HOST}/c/{self.client_id}'
+            'aud': urljoin(self.auth_endpoint, f'/c/{self.client_id}')
         }
 
         for scope in self.oauth_scopes:
-            scope_uri = f'{IMS_HOST}/s/{scope}'
-            payload[scope_uri] = True
+            url = urljoin(self.auth_endpoint, f'/s/{scope}')
+            payload[url] = True
 
         return payload
 

@@ -9,14 +9,16 @@ from urllib.parse import urljoin
 import requests
 
 PAGINATION_INDEX = 0
+API_HOST = 'https://usermanagement.adobe.io'
 
 
 class AdobeUmapiStream(RESTStream):
     """AdobeUmapi stream class."""
     @property
     def url_base(self) -> str:
-        url = self.config.get('api_url')
-        return urljoin(url, '/v2/usermanagement')
+        host = self.config.get('api_url', API_HOST)
+        path = '/v2/usermanagement'
+        return urljoin(host, path)
 
     @property
     @cached

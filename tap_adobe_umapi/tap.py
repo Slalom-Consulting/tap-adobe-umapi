@@ -62,10 +62,14 @@ class TapAdobeUmapi(Tap):
             description='User agent to present to the API'
         ),
         th.Property(
+            "auth_url",
+            th.StringType,
+            description='Override the Adobe authentication API base URL'
+        ),
+        th.Property(
             "api_url",
             th.StringType,
-            description='User Management API URL',
-            default='https://usermanagement.adobe.io'
+            description='Override the Adobe User Management API base URL'
         ),
     ).to_dict()
 
