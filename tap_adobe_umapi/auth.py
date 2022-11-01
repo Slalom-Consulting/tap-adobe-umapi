@@ -6,16 +6,16 @@ from urllib.parse import urljoin
 import jwt
 import time
 
-AUTH_HOST = 'https://ims-na1.adobelogin.com'
+AUTH_URL = 'https://ims-na1.adobelogin.com'
 
 
 class AdobeUmapiAuthenticator(OAuthJWTAuthenticator):
     """Authenticator class for AdobeUmapi."""
     @property
     def auth_endpoint(self) -> str:
-        host = self.config.get('auth_url', AUTH_HOST)
-        path = '/ims/exchange/jwt'
-        return urljoin(host, path)
+        base = self.config.get('auth_url', AUTH_URL)
+        endpoint = '/ims/exchange/jwt'
+        return urljoin(base, endpoint)
 
     @property
     def oauth_request_body(self) -> dict:
