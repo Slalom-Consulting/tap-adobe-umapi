@@ -65,7 +65,7 @@ class TapAdobeUmapi(Tap):
             "api_url",
             th.StringType,
             description='User Management API URL',
-            default='https://usermanagement.adobe.io/v2/usermanagement'
+            default='https://usermanagement.adobe.io'
         ),
     ).to_dict()
 

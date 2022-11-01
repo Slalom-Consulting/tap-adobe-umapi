@@ -5,6 +5,7 @@ from singer_sdk.streams import RESTStream
 from tap_adobe_umapi.auth import AdobeUmapiAuthenticator
 from tap_adobe_umapi.paginator import AdobeUmapiPaginator
 from memoization import cached
+from urllib.parse import urljoin
 import requests
 
 PAGINATION_INDEX = 0
@@ -14,7 +15,8 @@ class AdobeUmapiStream(RESTStream):
     """AdobeUmapi stream class."""
     @property
     def url_base(self) -> str:
-        return self.config.get('api_url')
+        url = self.config.get('api_url')
+        return urljoin(url, '/v2/usermanagement')
 
     @property
     @cached

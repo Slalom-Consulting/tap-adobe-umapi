@@ -57,7 +57,6 @@ tap-adobe-umapi --about --format=markdown
 | organization_id     | True     | None    | The unique identifier for an organization. |
 | auth_expiration     | False    |     300 | Expiraton in seconds for JWT exchange (Default: 300, Max: 86400, Recomended as small as possible) |
 | user_agent          | False    | None    | User agent to present to the API |
-| api_url             | False    | https://usermanagement.adobe.io/v2/usermanagement | User Management API URL |
 
 A full list of supported settings and capabilities is available by running: `tap-adobe-umapi --about`
 
