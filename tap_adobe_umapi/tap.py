@@ -30,6 +30,7 @@ class TapAdobeUmapi(Tap):
             'client_secret',
             th.StringType,
             required=True,
+            secret=True,
             description='The Client Secret for the service account (JWT)'
         ),
         th.Property(
@@ -42,6 +43,7 @@ class TapAdobeUmapi(Tap):
             'private_key',
             th.StringType,
             required=True,
+            secret=True,
             description='The Private Key for the service account (JWT)'
         ),
         th.Property(
