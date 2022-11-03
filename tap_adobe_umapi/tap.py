@@ -24,27 +24,27 @@ class TapAdobeUmapi(Tap):
             'client_id',
             th.StringType,
             required=True,
-            description='The Client ID for the service account (JWT)'
+            description='The Client ID for the service account (JWT).'
         ),
         th.Property(
             'client_secret',
             th.StringType,
             required=True,
             secret=True,
-            description='The Client Secret for the service account (JWT)'
+            description='The Client Secret for the service account (JWT).'
         ),
         th.Property(
             'technical_account_id',
             th.StringType,
             required=True,
-            description='The Technical Account ID for the service account (JWT)'
+            description='The Technical Account ID for the service account (JWT).'
         ),
         th.Property(
             'private_key',
             th.StringType,
             required=True,
             secret=True,
-            description='The Private Key for the service account (JWT)'
+            description='The Private Key for the service account (JWT).'
         ),
         th.Property(
             'organization_id',
@@ -55,23 +55,23 @@ class TapAdobeUmapi(Tap):
         th.Property(
             'auth_expiration',
             th.NumberType,
-            description='Expiraton in seconds for JWT exchange (Default: 300, Max: 86400, Recomended as small as possible)',
+            description='Expiraton in seconds for JWT exchange (Max: 86400, Recomended as small as possible).',
             default=300
         ),
         th.Property(
             "user_agent",
             th.StringType,
-            description='User agent to present to the API'
-        ),
-        th.Property(
-            "auth_url",
-            th.StringType,
-            description='Override the Adobe authentication API base URL'
+            description='User agent to present to the API.'
         ),
         th.Property(
             "api_url",
             th.StringType,
-            description='Override the Adobe User Management API base URL'
+            description='Override the Adobe User Management API base URL.'
+        ),
+        th.Property(
+            "auth_url",
+            th.StringType,
+            description='Override the Adobe authentication API base URL.'
         ),
     ).to_dict()
 
