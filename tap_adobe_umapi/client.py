@@ -27,6 +27,13 @@ class AdobeUmapiStream(RESTStream):
         """Return a new authenticator object."""
         return AdobeUmapiAuthenticator(self, oauth_scopes=['ent_user_sdk'])
 
+    def get_new_paginator(self) -> AdobeUmapiPaginator:
+        """Get a fresh paginator for this API endpoint.
+        Returns:
+            A paginator instance.
+        """
+        return AdobeUmapiPaginator(PAGINATION_INDEX)
+
     @property
     def http_headers(self) -> dict:
         """Return the http headers needed."""
@@ -41,12 +48,10 @@ class AdobeUmapiStream(RESTStream):
 
         return headers
 
-    def get_new_paginator(self) -> AdobeUmapiPaginator:
-        """Get a fresh paginator for this API endpoint.
-        Returns:
-            A paginator instance.
-        """
-        return AdobeUmapiPaginator(PAGINATION_INDEX)
+    def prepare_request(self, context: Optional[dict], next_page_token: Optional[Any]) -> requests.PreparedRequest:
+        context = context.copy() if context else {}
+        context['page'] = next_page_token or PAGINATION_INDEX
+        return super().prepare_request(context, None)
 
     def backoff_wait_generator(self) -> Callable[..., Generator[int, Any, None]]:
         def _backoff_from_headers(retriable_api_error) -> int:
@@ -54,9 +59,3 @@ class AdobeUmapiStream(RESTStream):
             return int(response_headers.get('Retry-After', 0))
 
         return self.backoff_runtime(value=_backoff_from_headers)
-
-    def prepare_request(self, context: Optional[dict], next_page_token: Optional[Any]) -> requests.PreparedRequest:
-        context = context.copy() if context else {}
-        context['page'] = next_page_token or PAGINATION_INDEX
-        return super().prepare_request(context, None)
-
