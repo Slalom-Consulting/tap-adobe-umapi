@@ -55,8 +55,8 @@ class AdobeUmapiStream(RESTStream):
 
         return self.backoff_runtime(value=_backoff_from_headers)
 
-    def prepare_request(self, context: dict, next_page_token: Any) -> requests.PreparedRequest:
-        context = copy.copy(context) or {}
+    def prepare_request(self, context: Optional[dict], next_page_token: Optional[Any]) -> requests.PreparedRequest:
+        context = context.copy() if context else {}
         context['page'] = next_page_token or PAGINATION_INDEX
         return super().prepare_request(context, None)
 
