@@ -6,6 +6,7 @@ from tap_adobe_umapi.auth import AdobeUmapiAuthenticator
 from tap_adobe_umapi.paginator import AdobeUmapiPaginator
 from memoization import cached
 from urllib.parse import urljoin
+import copy
 import requests
 
 PAGINATION_INDEX = 0
@@ -55,7 +56,7 @@ class AdobeUmapiStream(RESTStream):
         return self.backoff_runtime(value=_backoff_from_headers)
 
     def prepare_request(self, context: dict, next_page_token: Any) -> requests.PreparedRequest:
-        context = context or {}
+        context = copy.copy(context) or {}
         context['page'] = next_page_token or PAGINATION_INDEX
         return super().prepare_request(context, None)
 
