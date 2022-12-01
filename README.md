@@ -1,29 +1,72 @@
 # tap-adobe-umapi
 
-`tap-adobe-umapi` is a Singer tap for AdobeUmapi.
+`tap-adobe-umapi` is a Singer tap for the [Adobe User Management API](https://developer.adobe.com/UMAPI/).
 
-Built with the [Meltano Tap SDK](https://sdk.meltano.com) for Singer Taps.
+Built with the [Meltano Tap SDK](https://sdk.meltano.com) for Singer Taps and the [Adobe User Management API Reference](https://adobe-apiplatform.github.io/umapi-documentation/en/)
+
+<!--
+
+Developer TODO: Update the below as needed to correctly describe the install procedure. For instance, if you do not have a PyPi repo, or if you want users to directly install from your git repo, you can modify this step as appropriate.
 
 ## Installation
 
-- [ ] `Developer TODO:` Update the below as needed to correctly describe the install procedure. For instance, if you do not have a PyPi repo, or if you want users to directly install from your git repo, you can modify this step as appropriate.
+Install from PyPi:
 
 ```bash
 pipx install tap-adobe-umapi
 ```
 
+Install from GitHub:
+
+```bash
+pipx install git+https://github.com/ORG_NAME/tap-adobe-umapi.git@main
+```
+
+-->
+
 ## Configuration
 
 ### Accepted Config Options
 
-- [ ] `Developer TODO:` Provide a list of config options accepted by the tap.
+<!--
+Developer TODO: Provide a list of config options accepted by the tap.
 
-A full list of supported settings and capabilities for this
-tap is available by running:
+This section can be created by copy-pasting the CLI output from:
 
-```bash
-tap-adobe-umapi --about
 ```
+tap-adobe-umapi --about --format=markdown
+```
+-->
+## Capabilities
+
+* `catalog`
+* `state`
+* `discover`
+* `about`
+* `stream-maps`
+* `schema-flattening`
+
+## Settings
+
+| Setting             | Required | Default | Description |
+|:--------------------|:--------:|:-------:|:------------|
+| client_id           | True     | None    | The Client ID for the service account (JWT). |
+| client_secret       | True     | None    | The Client Secret for the service account (JWT). |
+| technical_account_id| True     | None    | The Technical Account ID for the service account (JWT). |
+| private_key         | True     | None    | The Private Key for the service account (JWT). |
+| organization_id     | True     | None    | The unique identifier for an organization. |
+| auth_expiration     | False    |     300 | Expiraton in seconds for JWT exchange (Max: 86400, Recomended as small as possible). |
+| user_agent          | False    | None    | User agent to present to the API. |
+| api_url             | False    | None    | Override the Adobe User Management API base URL. |
+| auth_url            | False    | None    | Override the Adobe authentication API base URL. |
+
+A full list of supported settings and capabilities is available by running: `tap-adobe-umapi --about`
+
+### Configure using environment variables
+
+This Singer tap will automatically import any environment variables within the working directory's
+`.env` if the `--config=ENV` is provided, such that config values will be considered if a matching
+environment variable is set either in the terminal context or in the `.env` file.
 
 ### Configure using environment variables
 
@@ -33,11 +76,7 @@ environment variable is set either in the terminal context or in the `.env` file
 
 ### Source Authentication and Authorization
 
-- [ ] `Developer TODO:` If your tap requires special access on the source system, or any special authentication requirements, provide those here.
-
-## Usage
-
-You can easily run `tap-adobe-umapi` by itself or in a pipeline using [Meltano](https://meltano.com/).
+Required auth configuration can be found [here](https://developer.adobe.com/developer-console/docs/guides/authentication/ServiceAccountIntegration/).
 
 ### Executing the Tap Directly
 
@@ -49,7 +88,7 @@ tap-adobe-umapi --config CONFIG --discover > ./catalog.json
 
 ## Developer Resources
 
-- [ ] `Developer TODO:` As a first step, scan the entire project for the text "`TODO:`" and complete any recommended steps, deleting the "TODO" references once completed.
+Follow these instructions to contribute to this project.
 
 ### Initialize your Development Environment
 
@@ -67,7 +106,7 @@ Create tests within the `tap_adobe_umapi/tests` subfolder and
 poetry run pytest
 ```
 
-You can also test the `tap-adobe-umapi` CLI interface directly using `poetry run`:
+You can also test the `tap_adobe_umapi` CLI interface directly using `poetry run`:
 
 ```bash
 poetry run tap-adobe-umapi --help
@@ -78,8 +117,11 @@ poetry run tap-adobe-umapi --help
 _**Note:** This tap will work in any Singer environment and does not require Meltano.
 Examples here are for convenience and to streamline end-to-end orchestration scenarios._
 
-Your project comes with a custom `meltano.yml` project file already created. Open the `meltano.yml` and follow any _"TODO"_ items listed in
+<!--
+Developer TODO:
+Your project comes with a custom `meltano.yml` project file already created. Open the `meltano.yml` and follow any "TODO" items listed in
 the file.
+-->
 
 Next, install Meltano (if you haven't already) and any needed plugins:
 
