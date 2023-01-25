@@ -8,6 +8,7 @@ import json
 with open('.secrets/config.json', 'r') as f:
     SAMPLE_CONFIG = json.load(f)
 
+
 # Run standard built-in tap tests from the SDK:
 def test_standard_tap_tests():
     """Run standard tap tests from the SDK."""

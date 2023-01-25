@@ -24,4 +24,3 @@ class GroupsStream(AdobeUmapiStream):
     primary_keys = ['groupId']
     replication_key = None
     schema_filepath = f'{SCHEMAS_DIR}/groups.json'
-    
