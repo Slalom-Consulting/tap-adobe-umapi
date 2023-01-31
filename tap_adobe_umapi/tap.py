@@ -1,6 +1,7 @@
 """AdobeUmapi tap class."""
 
 from typing import List
+
 from singer_sdk import Tap, Stream
 from singer_sdk import typing as th
 
@@ -8,6 +9,7 @@ from tap_adobe_umapi.streams import (
     UsersStream,
     GroupsStream
 )
+
 
 STREAM_TYPES = [
     UsersStream,
@@ -55,7 +57,8 @@ class TapAdobeUmapi(Tap):
         th.Property(
             'auth_expiration',
             th.NumberType,
-            description='Expiraton in seconds for JWT exchange (Max: 86400, Recomended as small as possible).',
+            description='Expiraton in seconds for JWT exchange '\
+                '(Max: 86400, Recomended as small as possible).',
             default=300
         ),
         th.Property(

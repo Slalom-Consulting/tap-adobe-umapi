@@ -1,10 +1,11 @@
 """AdobeUmapi Authentication."""
 
-from typing import Any, Union
-from singer_sdk.authenticators import OAuthJWTAuthenticator
 from urllib.parse import urljoin
-import jwt
 import time
+
+from singer_sdk.authenticators import OAuthJWTAuthenticator
+import jwt
+
 
 AUTH_URL = 'https://ims-na1.adobelogin.com'
 
@@ -40,8 +41,8 @@ class AdobeUmapiAuthenticator(OAuthJWTAuthenticator):
 
     @property
     def oauth_request_payload(self) -> dict:
-        private_key: Union[bytes, Any] = bytes(self.private_key, 'UTF-8')
-        private_key_string: Union[str, Any] = private_key.decode('UTF-8')
+        private_key = bytes(self.private_key, 'UTF-8')
+        private_key_string = private_key.decode('UTF-8')
 
         return {
             'client_id': self.client_id,

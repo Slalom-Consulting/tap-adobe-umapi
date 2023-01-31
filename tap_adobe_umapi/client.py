@@ -1,12 +1,15 @@
 """REST client handling, including AdobeUmapiStream base class."""
 
 from typing import Callable, Generator, Any, Optional
-from singer_sdk.streams import RESTStream
-from tap_adobe_umapi.auth import AdobeUmapiAuthenticator
-from tap_adobe_umapi.paginator import AdobeUmapiPaginator
 from memoization import cached
 from urllib.parse import urljoin
+
+from singer_sdk.streams import RESTStream
 import requests
+
+from tap_adobe_umapi.auth import AdobeUmapiAuthenticator
+from tap_adobe_umapi.paginator import AdobeUmapiPaginator
+
 
 PAGINATION_INDEX = 0
 API_URL = 'https://usermanagement.adobe.io'

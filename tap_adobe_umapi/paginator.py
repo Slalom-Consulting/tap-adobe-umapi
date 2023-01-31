@@ -7,5 +7,5 @@ from requests import Response
 class AdobeUmapiPaginator(BasePageNumberPaginator):
     """Paginator class for APIs that use page number."""
     def has_more(self, response: Response) -> bool:
-        last_page: bool = response.json().get('lastPage', True)
-        return last_page != True
+        is_last_page: bool = response.json().get('lastPage') or True
+        return not is_last_page

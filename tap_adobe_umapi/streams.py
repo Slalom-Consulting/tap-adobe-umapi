@@ -1,7 +1,9 @@
 """Stream type classes for tap-adobe-umapi."""
 
-from tap_adobe_umapi.client import AdobeUmapiStream
 from pathlib import Path
+
+from tap_adobe_umapi.client import AdobeUmapiStream
+
 
 SCHEMAS_DIR = Path(__file__).parent / Path('./schemas')
 
