@@ -20,7 +20,7 @@ class AdobeUmapiAuthenticator(OAuthJWTAuthenticator):
 
     @property
     def oauth_request_body(self) -> dict:
-        expiration = self.config.get("auth_expiration")
+        expiration = int(self.config["auth_expiration"])
         expiration_max = 60 * 60 * 24
 
         if expiration > expiration_max:
@@ -33,15 +33,16 @@ class AdobeUmapiAuthenticator(OAuthJWTAuthenticator):
             "aud": urljoin(self.auth_endpoint, f"/c/{self.client_id}"),
         }
 
-        for scope in self.oauth_scopes:
-            url = urljoin(self.auth_endpoint, f"/s/{scope}")
-            payload[url] = True
+        if self.oauth_scopes:
+            for scope in self.oauth_scopes:
+                url = urljoin(self.auth_endpoint, f"/s/{scope}")
+                payload[url] = True
 
         return payload
 
     @property
     def oauth_request_payload(self) -> dict:
-        private_key = bytes(self.private_key, "UTF-8")
+        private_key = bytes(str(self.private_key), "UTF-8")
         private_key_string = private_key.decode("UTF-8")
 
         return {

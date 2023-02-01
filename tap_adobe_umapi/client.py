@@ -1,10 +1,9 @@
 """REST client handling, including AdobeUmapiStream base class."""
 
-from typing import Any, Callable, Generator, Optional
+from typing import Any, Generator, Optional
 from urllib.parse import urljoin
 
 import requests
-from memoization import cached
 from singer_sdk.streams import RESTStream
 
 from tap_adobe_umapi.auth import AdobeUmapiAuthenticator
@@ -24,24 +23,23 @@ class AdobeUmapiStream(RESTStream):
         return urljoin(base, endpoint)
 
     @property
-    @cached
     def authenticator(self) -> AdobeUmapiAuthenticator:
-        return AdobeUmapiAuthenticator(self, oauth_scopes=["ent_user_sdk"])
+        return AdobeUmapiAuthenticator(self, oauth_scopes="ent_user_sdk")
 
     @property
     def http_headers(self) -> dict:
         headers = {
             "Content-type": "application/json",
             "Accept": "application/json",
-            "x-api-key": str(self.config.get("client_id")),
+            "x-api-key": str(self.config["client_id"]),
         }
 
         if self.config.get("user_agent"):
-            headers["User-Agent"] = self.config.get("user_agent")
+            headers["User-Agent"] = str(self.config["user_agent"])
 
         return headers
 
-    def backoff_wait_generator(self) -> Callable[..., Generator[int, Any, None]]:
+    def backoff_wait_generator(self) -> Generator[float, Any, None]:
         def _backoff_from_headers(retriable_api_error) -> int:
             response_headers = retriable_api_error.response.headers
             retry_after = response_headers.get("Retry-After", 0)

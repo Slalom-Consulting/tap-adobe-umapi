@@ -15,7 +15,7 @@ class UsersStream(AdobeUmapiStream):
     records_jsonpath = "$.users[*]"
     primary_keys = ["id"]
     replication_key = None
-    schema_filepath = f"{SCHEMAS_DIR}/users.json"
+    schema_filepath = SCHEMAS_DIR.joinpath("users.json")
 
 
 class GroupsStream(AdobeUmapiStream):
@@ -26,4 +26,4 @@ class GroupsStream(AdobeUmapiStream):
     records_jsonpath = "$.groups[*]"
     primary_keys = ["groupId"]
     replication_key = None
-    schema_filepath = f"{SCHEMAS_DIR}/groups.json"
+    schema_filepath = SCHEMAS_DIR.joinpath("groups.json")
