@@ -34,7 +34,7 @@ class AdobeUmapiAuthenticator(OAuthJWTAuthenticator):
         }
 
         if self.oauth_scopes:
-            for scope in self.oauth_scopes.split(','):
+            for scope in self.oauth_scopes.split(","):
                 url = urljoin(self.auth_endpoint, f"/s/{scope}")
                 payload[url] = True
 
