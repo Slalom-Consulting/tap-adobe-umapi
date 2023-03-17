@@ -23,7 +23,7 @@ mock_config = {
         "type": "auth",
         "url": "https://ims-na1.adobelogin.com/ims/exchange/jwt",
         "file": "auth.json",
-    }
+    },
 }
 
 
