@@ -4,7 +4,7 @@ import json
 
 import requests_mock
 
-API_URL = "https://api.miro.com"
+API_URL = "https://usermanagement.adobe.io/v2/usermanagement"
 
 mock_responses_path = "tap_adobe_umapi/tests/mock_responses"
 
@@ -18,6 +18,11 @@ mock_config = {
         "type": "stream",
         "endpoint": "/groups/{organization_id}/{page}",
         "file": "groups.json",
+    },
+    "auth": {
+        "type": "auth",
+        "url": "https://ims-na1.adobelogin.com/ims/exchange/jwt",
+        "file": "auth.json",
     }
 }
 
@@ -43,6 +48,14 @@ def mock_api(func, SAMPLE_CONFIG):
                         response = json.load(f)
 
                     m.get(url, json=response)
+
+                elif v["type"] == "auth":
+                    url = v["url"]
+
+                    with open(path, "r") as f:
+                        response = json.load(f)
+
+                    m.post(url, json=response)
 
             func()
 
