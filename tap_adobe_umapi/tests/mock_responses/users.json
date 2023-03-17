@@ -1,0 +1,15 @@
+{
+    "id": "TEST@TEST",
+    "email": "test@test.test",
+    "status": "active",
+    "groups": [
+        "TEST"
+    ],
+    "username": "test@test.test",
+    "domain": "test.test",
+    "orgSpecific": true,
+    "firstname": "Test",
+    "lastname": "Test",
+    "country": "Test",
+    "type": "Test"
+}
