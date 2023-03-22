@@ -58,9 +58,35 @@ tap-adobe-umapi --about --format=markdown
 | auth_expiration     | False    |     300 | Expiraton in seconds for JWT exchange (Max: 86400, Recomended as small as possible). |
 | user_agent          | False    | None    | User agent to present to the API. |
 | api_url             | False    | None    | Override the Adobe User Management API base URL. |
-| auth_url            | False    | None    | Override the Adobe authentication API base URL. |
+| stream_config       | False    | None    | A list of dictionaries for specifing additional configurations for a specified stream
 
-A full list of supported settings and capabilities is available by running: `tap-adobe-umapi --about`
+A full list of supported settings and capabilities for this tap is available by running:
+
+```bash
+tap-adobe-umapi --about
+```
+
+### Settings for Specific Streams
+
+Settings can be added on a per-stream basis and can be set using the stream_config setting. The stream_config setting takes a list of dictionaries, requiring the stream name as a value in the stream key. If the same stream name is added multiple times, only the last will be used.
+
+| Setting             | Required | Default | Description |
+|:--------------------|:--------:|:-------:|:------------|
+| stream              | True     | None    | Name of the stream to configure |
+| parameters          | False    | None    | URL query string to send to the stream endpoint |
+
+Example:
+
+```json
+{
+    "stream_config": [
+        {
+            "stream": "STREAM_NAME",
+            "parameters": "URL_QUERY_STRING"
+        }
+    ]
+}
+```
 
 ### Configure using environment variables
 
