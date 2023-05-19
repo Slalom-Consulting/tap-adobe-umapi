@@ -94,12 +94,6 @@ Example:
 }
 ```
 
-### Configure using environment variables
-
-This Singer tap will automatically import any environment variables within the working directory's
-`.env` if the `--config=ENV` is provided, such that config values will be considered if a matching
-environment variable is set either in the terminal context or in the `.env` file.
-
 ### Source Authentication and Authorization
 
 Required auth configuration can be found [here](https://developer.adobe.com/developer-console/docs/guides/authentication/ServiceAccountIntegration/).
