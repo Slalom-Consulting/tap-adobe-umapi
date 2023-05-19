@@ -83,8 +83,6 @@ Settings can be added on a per-stream basis and can be set using the stream_conf
 Example:
 
 ```json
-# config.json
-
 {
     "stream_config": {
         "users": {
