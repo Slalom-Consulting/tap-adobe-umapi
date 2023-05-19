@@ -4,6 +4,7 @@ from typing import Any, Generator, Optional
 from urllib.parse import parse_qsl, urljoin
 
 import requests
+from memoization import cached
 from singer_sdk.streams import RESTStream
 
 from tap_adobe_umapi.auth import AdobeUmapiAuthenticator
@@ -23,6 +24,7 @@ class AdobeUmapiStream(RESTStream):
         return urljoin(base, endpoint)
 
     @property
+    @cached  # type: ignore[override]
     def authenticator(self) -> AdobeUmapiAuthenticator:
         return AdobeUmapiAuthenticator(self, oauth_scopes="ent_user_sdk")
 
