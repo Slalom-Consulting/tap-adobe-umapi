@@ -70,6 +70,20 @@ class TapAdobeUmapi(Tap):
             th.StringType,
             description="Override the Adobe authentication API base URL.",
         ),
+        th.Property(
+            "stream_config",
+            th.ObjectType(
+                additional_properties=th.ObjectType(
+                    th.Property(
+                        "parameters",
+                        th.StringType,
+                        description="URL formatted parameters string to \
+                            be used for stream.",
+                    ),
+                )
+            ),
+            description="Custom configuration for streams.",
+        ),
     ).to_dict()
 
     def discover_streams(self) -> List[Stream]:

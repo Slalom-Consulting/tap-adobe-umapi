@@ -1,9 +1,10 @@
 """REST client handling, including AdobeUmapiStream base class."""
 
 from typing import Any, Generator, Optional
-from urllib.parse import urljoin
+from urllib.parse import parse_qsl, urljoin
 
 import requests
+from memoization import cached
 from singer_sdk.streams import RESTStream
 
 from tap_adobe_umapi.auth import AdobeUmapiAuthenticator
@@ -23,6 +24,7 @@ class AdobeUmapiStream(RESTStream):
         return urljoin(base, endpoint)
 
     @property
+    @cached  # type: ignore[override]
     def authenticator(self) -> AdobeUmapiAuthenticator:
         return AdobeUmapiAuthenticator(self, oauth_scopes="ent_user_sdk")
 
@@ -49,6 +51,19 @@ class AdobeUmapiStream(RESTStream):
 
     def get_new_paginator(self) -> AdobeUmapiPaginator:
         return AdobeUmapiPaginator(PAGINATION_INDEX)
+
+    def get_stream_config(self) -> dict:
+        """Get config for stream."""
+        stream_configs = self.config.get("stream_config", {})
+        return stream_configs.get(self.name, {})
+
+    def get_stream_params(self) -> dict:
+        """Get parameters set in config for stream."""
+        stream_params = self.get_stream_config().get("parameters", "")
+        return {qry[0]: qry[1] for qry in parse_qsl(stream_params.lstrip("?"))}
+
+    def get_url_params(self, context, next_page_token) -> dict:
+        return self.get_stream_params()
 
     def prepare_request(
         self, context: Optional[dict], next_page_token: Optional[Any]

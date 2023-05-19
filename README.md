@@ -24,6 +24,21 @@ pipx install git+https://github.com/ORG_NAME/tap-adobe-umapi.git@main
 
 -->
 
+Install from GitHub:
+
+```bash
+pipx install git+https://github.com/Slalom-Consulting/tap-adobe-umapi.git@main
+```
+
+## Capabilities
+
+* `catalog`
+* `state`
+* `discover`
+* `about`
+* `stream-maps`
+* `schema-flattening`
+
 ## Configuration
 
 ### Accepted Config Options
@@ -37,16 +52,7 @@ This section can be created by copy-pasting the CLI output from:
 tap-adobe-umapi --about --format=markdown
 ```
 -->
-## Capabilities
 
-* `catalog`
-* `state`
-* `discover`
-* `about`
-* `stream-maps`
-* `schema-flattening`
-
-## Settings
 
 | Setting             | Required | Default | Description |
 |:--------------------|:--------:|:-------:|:------------|
@@ -58,15 +64,33 @@ tap-adobe-umapi --about --format=markdown
 | auth_expiration     | False    |     300 | Expiraton in seconds for JWT exchange (Max: 86400, Recomended as small as possible). |
 | user_agent          | False    | None    | User agent to present to the API. |
 | api_url             | False    | None    | Override the Adobe User Management API base URL. |
-| auth_url            | False    | None    | Override the Adobe authentication API base URL. |
+| stream_config       | False    | None    | Specify additional configurations for a specified stream
 
-A full list of supported settings and capabilities is available by running: `tap-adobe-umapi --about`
+A full list of supported settings and capabilities for this tap is available by running:
 
-### Configure using environment variables
+```bash
+tap-adobe-umapi --about
+```
 
-This Singer tap will automatically import any environment variables within the working directory's
-`.env` if the `--config=ENV` is provided, such that config values will be considered if a matching
-environment variable is set either in the terminal context or in the `.env` file.
+### Settings for Specific Streams
+
+Settings can be added on a per-stream basis and can be set using the stream_config setting. The stream_config setting takes a dictionary with the stream name as the key and supports the following configuration options:
+
+| Setting             | Required | Default | Description |
+|:--------------------|:--------:|:-------:|:------------|
+| parameters          | False    | None    | URL query string to send to the stream endpoint |
+
+Example:
+
+```json
+{
+    "stream_config": {
+        "users": {
+            "parameters": "?domain=false&directOnly=false"
+        }
+    }
+}
+```
 
 ### Source Authentication and Authorization
 
