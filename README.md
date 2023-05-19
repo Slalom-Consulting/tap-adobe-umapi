@@ -24,6 +24,21 @@ pipx install git+https://github.com/ORG_NAME/tap-adobe-umapi.git@main
 
 -->
 
+Install from GitHub:
+
+```bash
+pipx install git+https://github.com/Slalom-Consulting/tap-adobe-umapi.git@main
+```
+
+## Capabilities
+
+* `catalog`
+* `state`
+* `discover`
+* `about`
+* `stream-maps`
+* `schema-flattening`
+
 ## Configuration
 
 ### Accepted Config Options
@@ -37,16 +52,7 @@ This section can be created by copy-pasting the CLI output from:
 tap-adobe-umapi --about --format=markdown
 ```
 -->
-## Capabilities
 
-* `catalog`
-* `state`
-* `discover`
-* `about`
-* `stream-maps`
-* `schema-flattening`
-
-## Settings
 
 | Setting             | Required | Default | Description |
 |:--------------------|:--------:|:-------:|:------------|
