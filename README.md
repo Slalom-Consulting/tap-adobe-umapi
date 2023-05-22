@@ -53,7 +53,6 @@ tap-adobe-umapi --about --format=markdown
 ```
 -->
 
-
 | Setting             | Required | Default | Description |
 |:--------------------|:--------:|:-------:|:------------|
 | client_id           | True     | None    | The Client ID for the service account (JWT). |
@@ -64,7 +63,7 @@ tap-adobe-umapi --about --format=markdown
 | auth_expiration     | False    |     300 | Expiraton in seconds for JWT exchange (Max: 86400, Recomended as small as possible). |
 | user_agent          | False    | None    | User agent to present to the API. |
 | api_url             | False    | None    | Override the Adobe User Management API base URL. |
-| stream_config       | False    | None    | Specify additional configurations for a specified stream
+| stream_config       | False    | None    | Specify additional configurations for a specified stream |
 
 A full list of supported settings and capabilities for this tap is available by running:
 
